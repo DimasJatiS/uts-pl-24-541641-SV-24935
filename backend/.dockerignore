@@ -1,0 +1,42 @@
+# File yang TIDAK boleh ikut masuk ke build context / image.
+
+# Rahasia: .env berisi APP_KEY dan password. Jangan pernah masuk image.
+.env
+.env.*
+auth.json
+
+# Dependency di-install ulang di dalam image
+vendor/
+node_modules/
+
+# Metadata git dan editor
+.git/
+.github/
+.gitattributes
+.gitignore
+.editorconfig
+.idea/
+.vscode/
+
+# Test dan alat development tidak dibutuhkan di production
+tests/
+phpunit.xml
+.phpunit.cache/
+.phpunit.result.cache
+pint.json
+
+# Data lokal dan file yang dihasilkan saat runtime
+database/*.sqlite
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/private/*
+storage/app/public/*
+bootstrap/cache/*.php
+!storage/**/.gitignore
+
+# File Docker sendiri dan dokumentasi
+Dockerfile
+.dockerignore
+*.md
