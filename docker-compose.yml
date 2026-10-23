@@ -1,0 +1,102 @@
+# ChainFolio — Docker Compose
+#
+#   browser ──:8080──▶ frontend (nginx) ──/api──▶ backend (FrankenPHP + Laravel) ──▶ db (MySQL)
+#
+# Jalankan:  cp .env.example .env   (isi APP_KEY & password)  →  docker compose up -d --build
+# Cek:       docker compose ps
+#
+# Container saling menemukan lewat NAMA SERVICE: nginx memanggil "backend:8000",
+# Laravel memanggil "db:3306". Tidak ada alamat IP yang ditulis manual.
+
+name: chainfolio
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-chainfolio}
+      MYSQL_USER: ${DB_USERNAME:-chainfolio}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Isi DB_PASSWORD di file .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Isi DB_ROOT_PASSWORD di file .env}
+    volumes:
+      # Named volume: data tetap ada walau container dihapus/dibuat ulang.
+      - db-data:/var/lib/mysql
+    networks:
+      - internal
+    # Port 3306 sengaja TIDAK dibuka ke host.
+    healthcheck:
+      # mysqladmin ping berhasil selama server hidup (tidak butuh password).
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./backend
+      target: runtime
+    image: ${BACKEND_IMAGE:-chainfolio-backend:local}
+    restart: unless-stopped
+    environment:
+      APP_NAME: ChainFolio
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_KEY: ${APP_KEY:?Isi APP_KEY di file .env}
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: ${DB_DATABASE:-chainfolio}
+      DB_USERNAME: ${DB_USERNAME:-chainfolio}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SESSION_DRIVER: array
+      CACHE_STORE: database
+      QUEUE_CONNECTION: sync
+      SANCTUM_EXPIRATION: ${SANCTUM_EXPIRATION:-1440}
+      CORS_ALLOWED_ORIGINS: ${APP_URL:-http://localhost:8080}
+      COINGECKO_API_KEY: ${COINGECKO_API_KEY:-}
+      RUN_MIGRATIONS: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - internal # untuk bicara dengan db
+      - edge # untuk menerima request dari nginx & memanggil CoinGecko
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # Healthcheck didefinisikan di backend/Dockerfile (GET /api/health).
+
+  frontend:
+    build:
+      context: ./frontend
+      target: runtime
+      args:
+        VITE_API_BASE_URL: /api
+    image: ${FRONTEND_IMAGE:-chainfolio-frontend:local}
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-8080}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - edge
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  db-data:
+
+networks:
+  edge:
+  internal:
+    # Jaringan internal tidak punya akses internet: database terisolasi.
+    internal: true

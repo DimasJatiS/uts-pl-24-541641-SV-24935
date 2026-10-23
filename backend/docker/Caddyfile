@@ -1,0 +1,28 @@
+# Konfigurasi FrankenPHP (berbasis Caddy) untuk container backend.
+# HTTPS tidak diaktifkan di sini karena container hanya diakses nginx
+# di jaringan internal Docker; di production, TLS diterminasi di depan.
+{
+	skip_install_trust
+	auto_https off
+	admin off
+
+	frankenphp
+}
+
+:8000 {
+	root * /app/public
+
+	log {
+		output stderr
+		format console
+	}
+
+	encode zstd br gzip
+
+	header {
+		-Server
+		-X-Powered-By
+	}
+
+	php_server
+}

@@ -1,0 +1,21 @@
+# File yang TIDAK boleh ikut masuk ke build context / image.
+
+# Rahasia dan konfigurasi lokal
+.env
+.env.*
+
+# Di-install ulang dengan `npm ci` di dalam image
+node_modules/
+dist/
+
+# Metadata git dan editor
+.git/
+.gitignore
+.vscode/
+.idea/
+*.log
+
+# File Docker sendiri dan dokumentasi
+Dockerfile
+.dockerignore
+*.md
