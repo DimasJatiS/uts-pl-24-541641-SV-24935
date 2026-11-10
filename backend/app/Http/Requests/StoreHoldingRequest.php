@@ -30,17 +30,17 @@ class StoreHoldingRequest extends FormRequest
     protected function failedValidation(Validator $validator): void
     {
         Log::warning('holding.validation_failed', [
-            'actor_type'    => $this->user() ? 'authenticated_user' : 'anonymous_user',
-            'user_id'       => $this->user()?->id,
-            'action'        => 'validate_create_holding',
-            'reason'        => 'request_validation_failed',
+            'actor_type' => $this->user() ? 'authenticated_user' : 'anonymous_user',
+            'user_id' => $this->user()?->id,
+            'action' => 'validate_create_holding',
+            'reason' => 'request_validation_failed',
             'failed_fields' => array_keys($validator->errors()->toArray()),
         ]);
 
         throw new HttpResponseException(
             response()->json([
                 'message' => 'Data yang dikirim tidak valid.',
-                'errors'  => $validator->errors(),
+                'errors' => $validator->errors(),
             ], 422)
         );
     }
@@ -88,15 +88,15 @@ class StoreHoldingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'coin_id.required'  => 'Koin wajib dipilih.',
-            'coin_id.exists'    => 'Koin tidak dikenal. Pilih dari daftar /api/coins.',
-            'coin_id.unique'    => 'Koin ini sudah ada di portofolio. Edit holding yang sudah ada.',
-            'amount.required'   => 'Jumlah koin wajib diisi.',
-            'amount.numeric'    => 'Jumlah koin harus berupa angka.',
-            'amount.gt'         => 'Jumlah koin harus lebih dari 0.',
+            'coin_id.required' => 'Koin wajib dipilih.',
+            'coin_id.exists' => 'Koin tidak dikenal. Pilih dari daftar /api/coins.',
+            'coin_id.unique' => 'Koin ini sudah ada di portofolio. Edit holding yang sudah ada.',
+            'amount.required' => 'Jumlah koin wajib diisi.',
+            'amount.numeric' => 'Jumlah koin harus berupa angka.',
+            'amount.gt' => 'Jumlah koin harus lebih dari 0.',
             'avg_buy_price_usd.required' => 'Harga beli rata-rata wajib diisi.',
-            'avg_buy_price_usd.numeric'  => 'Harga beli rata-rata harus berupa angka.',
-            'avg_buy_price_usd.gte'      => 'Harga beli tidak boleh negatif.',
+            'avg_buy_price_usd.numeric' => 'Harga beli rata-rata harus berupa angka.',
+            'avg_buy_price_usd.gte' => 'Harga beli tidak boleh negatif.',
         ];
     }
 }

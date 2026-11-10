@@ -36,12 +36,12 @@ class HoldingController extends Controller
         $holding = $request->user()->holdings()->create($request->validated());
 
         Log::info('holding.created', [
-            'actor_type'  => 'authenticated_user',
-            'user_id'     => $request->user()->id,
-            'action'      => 'create_holding',
-            'resource'    => 'holding',
+            'actor_type' => 'authenticated_user',
+            'user_id' => $request->user()->id,
+            'action' => 'create_holding',
+            'resource' => 'holding',
             'resource_id' => $holding->id,
-            'reason'      => 'holding_saved_successfully',
+            'reason' => 'holding_saved_successfully',
         ]);
 
         return (new HoldingResource($holding->fresh('coin')))
@@ -66,12 +66,12 @@ class HoldingController extends Controller
         $model->update($request->validated());
 
         Log::info('holding.updated', [
-            'actor_type'  => 'authenticated_user',
-            'user_id'     => $request->user()->id,
-            'action'      => 'update_holding',
-            'resource'    => 'holding',
+            'actor_type' => 'authenticated_user',
+            'user_id' => $request->user()->id,
+            'action' => 'update_holding',
+            'resource' => 'holding',
             'resource_id' => $model->id,
-            'reason'      => 'holding_updated_successfully',
+            'reason' => 'holding_updated_successfully',
         ]);
 
         return new HoldingResource($model->fresh('coin'));
@@ -88,12 +88,12 @@ class HoldingController extends Controller
         $model->delete();
 
         Log::info('holding.deleted', [
-            'actor_type'  => 'authenticated_user',
-            'user_id'     => $request->user()->id,
-            'action'      => 'delete_holding',
-            'resource'    => 'holding',
+            'actor_type' => 'authenticated_user',
+            'user_id' => $request->user()->id,
+            'action' => 'delete_holding',
+            'resource' => 'holding',
             'resource_id' => $holdingId,
-            'reason'      => 'holding_deleted_successfully',
+            'reason' => 'holding_deleted_successfully',
         ]);
 
         return response()->json(['message' => 'Holding dihapus.'], Response::HTTP_OK);
