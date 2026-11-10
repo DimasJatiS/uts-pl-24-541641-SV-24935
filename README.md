@@ -110,3 +110,15 @@ Secrets (Settings → Secrets and variables → Actions → Repository secrets):
 - nginx: CSP ketat, `X-Frame-Options`, `nosniff`; ESLint melarang `v-html`.
 - Container non-root, `cap_drop: ALL`, `no-new-privileges`, port database tidak dibuka, jaringan DB `internal`.
 - Tidak ada rahasia di Dockerfile maupun repository; `.env` di-ignore oleh git dan `.dockerignore`.
+
+## Healthcheck dan logging
+
+Endpoint '/health' memeriksa database dan cache.
+
+- HTTP 200: Semua komponen sehat.
+- HTTP 503: Setidaknya satu komponen bermasalah.
+
+'''bash
+curl.exe -i http://localhost:8081/api/health   # Sesuaikan port
+docker compose ps
+docker compose logs -f backend
