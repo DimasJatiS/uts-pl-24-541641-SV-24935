@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -18,7 +18,7 @@ class HealthController extends Controller
     {
         $checks = [
             'database' => 'healthy',
-            'cache'    => 'healthy',
+            'cache' => 'healthy',
         ];
 
         // 1. Tes Koneksi Database MySQL
@@ -31,7 +31,7 @@ class HealthController extends Controller
 
         // 2. Tes Operasi Cache (Menggunakan Durasi Expiration yang Aman)
         try {
-            $cacheKey = 'health_test_' . bin2hex(random_bytes(4));
+            $cacheKey = 'health_test_'.bin2hex(random_bytes(4));
             Cache::put($cacheKey, 'ok', now()->addSeconds(30));
 
             if (Cache::get($cacheKey) !== 'ok') {

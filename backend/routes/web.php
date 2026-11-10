@@ -13,15 +13,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/health', function () {
     try {
         DB::connection()->getPdo();
+
         return response()->json([
-            'status'    => 'healthy',
-            'database'  => 'connected',
+            'status' => 'healthy',
+            'database' => 'connected',
             'timestamp' => now()->toIso8601String(),
         ], 200);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         return response()->json([
             'status' => 'unhealthy',
-            'error'  => $e->getMessage(),
+            'error' => $e->getMessage(),
         ], 500);
     }
 });
