@@ -153,7 +153,7 @@ class AuthTest extends TestCase
     {
         $this->getJson('/api/health')
             ->assertOk()
-            ->assertJsonPath('status', 'ok')
+            ->assertJsonPath('status', 'healthy')
             ->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('X-Frame-Options', 'DENY');
     }
