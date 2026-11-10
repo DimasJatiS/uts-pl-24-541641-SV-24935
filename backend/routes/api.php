@@ -8,18 +8,22 @@ use App\Http\Controllers\Api\PortfolioController;
 use Illuminate\Support\Facades\Route;
 
 /*
-| Semua route di file ini otomatis berawalan /api.
+|--------------------------------------------------------------------------
+| API Routes — ChainFolio
+|--------------------------------------------------------------------------
+| Semua route di file ini otomatis berawalan /api
 */
 
+// Health Check Endpoint (menggunakan HealthController)
 Route::get('/health', HealthController::class)->name('health');
 
-// Endpoint publik, dibatasi rate limiter "auth" (anti brute force).
+// Endpoint publik (Rate-limited)
 Route::middleware('throttle:auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 });
 
-// Endpoint yang wajib membawa header "Authorization: Bearer <token>".
+// Endpoint terproteksi (Wajib Bearer Token via Sanctum)
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
     Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
