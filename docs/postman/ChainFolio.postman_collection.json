@@ -654,9 +654,9 @@
                 "exec": [
                   "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Respons JSON\", () => pm.response.to.be.json);",
-                  "const data = pm.response.json().data;",
-                  "pm.test(\"Ada total modal\", () => pm.expect(data.totals.cost_usd).to.eql(\"18600.15\"));",
-                  "pm.test(\"Ada penanda prices_stale\", () => pm.expect(data).to.have.property(\"prices_stale\"));"
+                  "const summary = pm.response.json().data;",
+                  "pm.test(\"Ada total modal\", () => pm.expect(summary.totals.cost_usd).to.eql(\"18600.15\"));",
+                  "pm.test(\"Ada penanda prices_stale\", () => pm.expect(summary).to.have.property(\"prices_stale\"));"
                 ]
               }
             }

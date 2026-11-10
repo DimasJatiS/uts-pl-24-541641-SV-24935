@@ -3,6 +3,7 @@
 # Rahasia: .env berisi APP_KEY dan password. Jangan pernah masuk image.
 .env
 .env.*
+!.env.example
 auth.json
 
 # Dependency di-install ulang di dalam image
