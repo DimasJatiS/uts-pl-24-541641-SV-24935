@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Api\HealthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,23 +9,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Endpoint Health Check untuk Docker Daemon
-Route::get('/health', function () {
-    try {
-        DB::connection()->getPdo();
-
-        return response()->json([
-            'status' => 'healthy',
-            'database' => 'connected',
-            'timestamp' => now()->toIso8601String(),
-        ], 200);
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => 'unhealthy',
-            'error' => $e->getMessage(),
-        ], 500);
-    }
-});
+// Health check untuk healthcheck Docker (curl http://localhost:8000/health).
+// Memakai controller yang sama dengan /api/health supaya hasilnya identik.
+Route::get('/health', HealthController::class);
 
 // Root Endpoint (JSON Info)
 Route::get('/', fn () => response()->json([

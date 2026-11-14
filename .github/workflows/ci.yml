@@ -184,6 +184,10 @@ jobs:
           echo "BACKEND_IMAGE=ghcr.io/${repo}-backend" >> "$GITHUB_ENV"
           echo "FRONTEND_IMAGE=ghcr.io/${repo}-frontend" >> "$GITHUB_ENV"
           echo "IMAGE_TAG=sha-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          # password grafana dummy, monitoring tidak ikut dijalankan di CI
+          grafana_pw="$(openssl rand -hex 16)"
+          echo "::add-mask::${grafana_pw}"
+          echo "GRAFANA_ADMIN_PASSWORD=${grafana_pw}" >> "$GITHUB_ENV"
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -244,7 +248,7 @@ jobs:
           done
 
           docker compose pull backend frontend
-          docker compose up -d --no-build --wait --wait-timeout 180
+          docker compose up -d --no-build --wait --wait-timeout 180 db backend frontend
           docker compose ps
 
           echo "1) Health check"
