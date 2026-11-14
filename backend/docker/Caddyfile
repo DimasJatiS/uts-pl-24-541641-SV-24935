@@ -6,6 +6,15 @@
 	auto_https off
 	admin off
 
+	metrics
+
+	servers :8000 {
+		name app
+	}
+	servers :9180 {
+		name metrics
+	}
+
 	frankenphp
 	order php_server before file_server
 }
@@ -26,4 +35,9 @@
 	}
 
 	php_server
+}
+
+# metrik untuk prometheus (internal saja)
+:9180 {
+	metrics /metrics
 }

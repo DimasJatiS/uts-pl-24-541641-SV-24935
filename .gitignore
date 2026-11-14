@@ -12,3 +12,15 @@ Thumbs.db
 
 # Hasil build lokal
 *.log
+
+# Laporan
+laporan-*.txt
+Laporan_KEPL_*/
+Laporan/
+laporan/
+screenshots/
+WhatsApp*/
+WhatsApp*
+*.pdf
+*.docx
+~$*

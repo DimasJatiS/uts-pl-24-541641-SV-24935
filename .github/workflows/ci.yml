@@ -177,8 +177,17 @@ jobs:
           echo "frontend=ghcr.io/${repo}-frontend" >> "$GITHUB_OUTPUT"
           echo "tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
           # Dibaca docker compose di step smoke test, log, dan pembersihan.
-          echo "BACKEND_IMAGE=ghcr.io/${repo}-backend:sha-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
-          echo "FRONTEND_IMAGE=ghcr.io/${repo}-frontend:sha-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          # PENTING: nama image ditulis TANPA tag. docker-compose.yml memakai pola
+          # "${BACKEND_IMAGE}:${IMAGE_TAG}", jadi kalau tag ikut ditulis di sini
+          # hasilnya jadi dua tag ("...:sha-abc1234:local") dan ditolak daemon
+          # dengan "invalid reference format".
+          echo "BACKEND_IMAGE=ghcr.io/${repo}-backend" >> "$GITHUB_ENV"
+          echo "FRONTEND_IMAGE=ghcr.io/${repo}-frontend" >> "$GITHUB_ENV"
+          echo "IMAGE_TAG=sha-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          # password grafana dummy, monitoring tidak ikut dijalankan di CI
+          grafana_pw="$(openssl rand -hex 16)"
+          echo "::add-mask::${grafana_pw}"
+          echo "GRAFANA_ADMIN_PASSWORD=${grafana_pw}" >> "$GITHUB_ENV"
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -239,7 +248,7 @@ jobs:
           done
 
           docker compose pull backend frontend
-          docker compose up -d --no-build --wait --wait-timeout 180
+          docker compose up -d --no-build --wait --wait-timeout 180 db backend frontend
           docker compose ps
 
           echo "1) Health check"
