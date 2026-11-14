@@ -1,0 +1,12 @@
+groups:
+  - name: chainfolio
+    rules:
+      - alert: BackendDown
+        expr: up{job="chainfolio-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend ChainFolio down lebih dari 1 menit"
+          description: "Prometheus tidak bisa scrape {{ $labels.instance }}, API kemungkinan tidak bisa diakses."
+          action: "Cek docker compose ps backend dan docker compose logs --tail=100 backend, lalu jalankan docker compose up -d backend."

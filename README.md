@@ -111,6 +111,26 @@ Secrets (Settings → Secrets and variables → Actions → Repository secrets):
 - Container non-root, `cap_drop: ALL`, `no-new-privileges`, port database tidak dibuka, jaringan DB `internal`.
 - Tidak ada rahasia di Dockerfile maupun repository; `.env` di-ignore oleh git dan `.dockerignore`.
 
+## Monitoring
+
+| Service | Image | Akses |
+| --- | --- | --- |
+| prometheus | `prom/prometheus:v3.15.1` | http://localhost:9090 |
+| grafana | `grafana/grafana:12.4.15` | http://localhost:3000 |
+| cadvisor | `ghcr.io/google/cadvisor:v0.60.4` | internal |
+| node-exporter | `prom/node-exporter:v1.12.1` | internal |
+
+Config ada di folder `monitoring/` (prometheus.yml, alerts.yml, dashboard JSON).
+Login Grafana pakai `GRAFANA_ADMIN_USER` dan `GRAFANA_ADMIN_PASSWORD` di `.env`.
+
+Ganti password Grafana:
+
+```bash
+docker compose exec grafana grafana cli admin reset-admin-password '<password-baru>'
+```
+
+Tes alert: `docker compose stop backend`, tunggu sekitar 1 menit, cek http://localhost:9090/alerts.
+
 ## Healthcheck dan logging
 
 Endpoint '/health' memeriksa database dan cache.

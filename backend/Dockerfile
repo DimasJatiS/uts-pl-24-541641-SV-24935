@@ -70,10 +70,10 @@ ENV APP_ENV=production \
 
 USER laravel
 
-EXPOSE 8000 80
+EXPOSE 8000 9180
 
-HEALTHCHECK --interval=10s --timeout=8s --start-period=40s --retries=3 \
-    CMD curl -f http://127.0.0.1:8000/health || exit 1
+HEALTHCHECK --interval=10s --timeout=12s --start-period=40s --retries=3 \
+    CMD curl -f http://127.0.0.1:8000/api/health || exit 1
 
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
 CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile", "--adapter", "caddyfile"]
